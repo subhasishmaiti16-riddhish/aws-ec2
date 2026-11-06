@@ -10,7 +10,6 @@ on:
       - main
       - 'feature/**'
 
-
 jobs:
   terraform:
     runs-on: [self-hosted, Windows, X64]
@@ -21,11 +20,6 @@ jobs:
         working-directory: ./parent
 
     steps:
-      - name: Debug - list files
-        run: |
-          Get-Location
-          Get-ChildItem -Recurse -Filter *.tf | Select-Object FullName
-
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -48,12 +42,10 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
-      # Feature branch: Plan only
       - name: Terraform Plan
         if: startsWith(github.ref, 'refs/heads/feature/')
         run: terraform plan
 
-      # Main branch: Apply
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
         run: terraform apply -auto-approve
