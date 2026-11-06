@@ -18,7 +18,6 @@ jobs:
     defaults:
       run:
         shell: powershell -ExecutionPolicy Bypass -File {0}
-        working-directory: ./parent
 
     steps:
       - name: Checkout
@@ -60,17 +59,17 @@ jobs:
           Get-ChildItem *.tf
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform -chdir=parent init
 
       - name: Terraform Validate
-        run: terraform validate
+        run: terraform -chdir=parent validate
 
       # Feature branch: Plan only
       - name: Terraform Plan
         if: startsWith(github.ref, 'refs/heads/feature/')
-        run: terraform plan
+        run: terraform -chdir=parent plan
 
       # Main branch: Apply
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
-        run: terraform apply -auto-approve
+        run: terraform -chdir=parent apply -auto-approve
