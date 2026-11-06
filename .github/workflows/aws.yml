@@ -24,19 +24,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Check Directory Structure
+      - name: Debug Terraform Module Paths
         run: |
-          Write-Host "Current Directory:"
+          Write-Host "===== CURRENT DIRECTORY ====="
           Get-Location
 
-          Write-Host "Parent Directory:"
+          Write-Host "===== PARENT CONTENTS ====="
           Get-ChildItem -Force
 
-          Write-Host "Child Directory:"
-          Get-ChildItem ../child -Force
+          Write-Host "===== CHILD DIRECTORY CHECK ====="
+          Write-Host "VPC: $(Test-Path ../child/vpc)"
+          Write-Host "Subnet: $(Test-Path ../child/subnet)"
+          Write-Host "Security Group: $(Test-Path ../child/Security_group)"
+          Write-Host "Internet Gateway: $(Test-Path ../child/internet_gateway)"
+          Write-Host "NAT Gateway: $(Test-Path ../child/nat_gw)"
+          Write-Host "Route: $(Test-Path ../child/route)"
+          Write-Host "EC2: $(Test-Path ../child/ec2)"
 
-          Write-Host "Terraform Module Sources:"
-          Get-ChildItem -Path ../child -Filter *.tf -Recurse
+          Write-Host "===== ALL TERRAFORM MODULE SOURCES ====="
+          Get-ChildItem -Path .. -Filter *.tf -Recurse |
+            Select-String -Pattern 'source\s*='
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v6
