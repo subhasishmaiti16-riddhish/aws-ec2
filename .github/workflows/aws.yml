@@ -48,17 +48,16 @@ jobs:
       - name: Terraform Version
         run: terraform version
 
-      - name: Debug Terraform
+      - name: Verify Terraform Working Directory
         run: |
-          Write-Host "Workspace:"
-          Write-Host $env:GITHUB_WORKSPACE
+          Write-Host "Current Directory:"
+          Get-Location
 
-          Write-Host "Root Files:"
-          Get-ChildItem $env:GITHUB_WORKSPACE -Force
+          Write-Host "main.tf exists:"
+          Test-Path .\main.tf
 
-          Write-Host "Terraform Files:"
-          Get-ChildItem $env:GITHUB_WORKSPACE -Filter *.tf -Recurse |
-            Select-Object FullName
+          Write-Host "Terraform files:"
+          Get-ChildItem *.tf
 
       - name: Terraform Init
         run: terraform init
