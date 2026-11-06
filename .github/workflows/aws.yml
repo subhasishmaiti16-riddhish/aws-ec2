@@ -48,6 +48,18 @@ jobs:
       - name: Terraform Version
         run: terraform version
 
+      - name: Debug Terraform
+        run: |
+          Write-Host "Workspace:"
+          Write-Host $env:GITHUB_WORKSPACE
+
+          Write-Host "Root Files:"
+          Get-ChildItem $env:GITHUB_WORKSPACE -Force
+
+          Write-Host "Terraform Files:"
+          Get-ChildItem $env:GITHUB_WORKSPACE -Filter *.tf -Recurse |
+            Select-Object FullName
+
       - name: Terraform Init
         run: terraform init
 
