@@ -24,6 +24,36 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Inspect GitHub OIDC Claims
+        shell: powershell
+        run: |
+          $headers = @{
+            Authorization = "Bearer $env:ACTIONS_ID_TOKEN_REQUEST_TOKEN"
+          }
+
+          $uri = "$($env:ACTIONS_ID_TOKEN_REQUEST_URL)&audience=sts.amazonaws.com"
+
+          $response = Invoke-RestMethod `
+            -Uri $uri `
+            -Headers $headers
+
+          $jwt = $response.value
+          $payload = $jwt.Split('.')[1].Replace('-', '+').Replace('_', '/')
+
+          switch ($payload.Length % 4) {
+            2 { $payload += '==' }
+            3 { $payload += '=' }
+          }
+
+          $claims = [System.Text.Encoding]::UTF8.GetString(
+            [Convert]::FromBase64String($payload)
+          ) | ConvertFrom-Json
+
+          Write-Host "Audience: $($claims.aud)"
+          Write-Host "Subject: $($claims.sub)"
+          Write-Host "Repository: $($claims.repository)"
+          Write-Host "Ref: $($claims.ref)"
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
