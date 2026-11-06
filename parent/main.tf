@@ -1,37 +1,37 @@
 
 module "vpc-dev" {
-  source = "../child/vpc"
+  source = "../../child/vpc"
   vpc    = var.vpc-dev
 }
 
 module "subnet-dev" {
   depends_on = [module.vpc-dev]
-  source     = "../child/subnet"
+  source     = "../../child/subnet"
   subnet     = var.subnet-dev
 }
 
 module "security_group-dev" {
   depends_on = [module.vpc-dev]
-  source     = "../child/Security_group"
+  source     = "../../child/Security_group"
   sg         = var.sg-dev
 }
 
 # IGW should depend on VPC, not Route Table
 module "ig-dev" {
   depends_on = [module.vpc-dev]
-  source     = "../child/internet_gateway"
+  source     = "../../child/internet_gateway"
   ig         = var.ig-dev
 }
 
 module "nat-dev" {
   depends_on = [module.subnet-dev, module.ig-dev]
-  source     = "../child/nat_gw"
+  source     = "../../child/nat_gw"
   nat        = var.nat-dev
 }
 
 # Route table depends on NAT and IGW
 module "route-table-dev" {
-  source = "../child/route"
+  source = "../../child/route"
 
   route = var.route-table-dev
 
@@ -45,6 +45,6 @@ module "ec2-dev" {
     module.security_group-dev,
     module.route-table-dev
   ]
-  source = "../child/ec2"
+  source = "../../child/ec2"
   ec2    = var.ec2-dev
 }
