@@ -24,26 +24,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Debug Terraform Module Paths
+      - name: Debug Repository
         run: |
-          Write-Host "===== CURRENT DIRECTORY ====="
+          Write-Host "Repository Root:"
           Get-Location
 
-          Write-Host "===== PARENT CONTENTS ====="
+          Write-Host "All Files:"
           Get-ChildItem -Force
 
-          Write-Host "===== CHILD DIRECTORY CHECK ====="
-          Write-Host "VPC: $(Test-Path ../child/vpc)"
-          Write-Host "Subnet: $(Test-Path ../child/subnet)"
-          Write-Host "Security Group: $(Test-Path ../child/Security_group)"
-          Write-Host "Internet Gateway: $(Test-Path ../child/internet_gateway)"
-          Write-Host "NAT Gateway: $(Test-Path ../child/nat_gw)"
-          Write-Host "Route: $(Test-Path ../child/route)"
-          Write-Host "EC2: $(Test-Path ../child/ec2)"
-
-          Write-Host "===== ALL TERRAFORM MODULE SOURCES ====="
-          Get-ChildItem -Path .. -Filter *.tf -Recurse |
-            Select-String -Pattern 'source\s*='
+          Write-Host "Terraform Files:"
+          Get-ChildItem -Filter *.tf -Recurse
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v6
@@ -59,10 +49,10 @@ jobs:
         run: terraform version
 
       - name: Terraform Init
-        run: terraform -chdir=parent init
+        run: terraform init
 
       - name: Terraform Validate
-        run: terraform -chdir=parent validate
+        run: terraform validate
 
       # Feature branch: Plan only
       - name: Terraform Plan
