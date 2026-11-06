@@ -37,19 +37,23 @@ jobs:
         run: terraform version
 
       - name: Terraform Init
-        working-directory: parent
-        run: terraform init
+        run: |
+          Set-Location "$env:GITHUB_WORKSPACE\parent"
+          terraform init
 
       - name: Terraform Validate
-        working-directory: parent
-        run: terraform validate
+        run: |
+          Set-Location "$env:GITHUB_WORKSPACE\parent"
+          terraform validate
 
       - name: Terraform Plan
         if: startsWith(github.ref, 'refs/heads/feature/')
-        working-directory: parent
-        run: terraform plan
+        run: |
+          Set-Location "$env:GITHUB_WORKSPACE\parent"
+          terraform plan
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
-        working-directory: parent
-        run: terraform apply -auto-approve
+        run: |
+          Set-Location "$env:GITHUB_WORKSPACE\parent"
+          terraform apply -auto-approve
