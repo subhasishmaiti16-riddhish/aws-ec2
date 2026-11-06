@@ -29,11 +29,14 @@ jobs:
           Write-Host "Current Directory:"
           Get-Location
 
-          Write-Host "Repository Files:"
+          Write-Host "Parent Directory:"
           Get-ChildItem -Force
 
-          Write-Host "Terraform Files:"
-          Get-ChildItem -Path . -Filter *.tf -Recurse
+          Write-Host "Child Directory:"
+          Get-ChildItem ../child -Force
+
+          Write-Host "Terraform Module Sources:"
+          Get-ChildItem -Path ../child -Filter *.tf -Recurse
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v6
