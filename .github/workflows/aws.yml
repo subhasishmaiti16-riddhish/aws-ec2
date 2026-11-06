@@ -59,17 +59,17 @@ jobs:
           Get-ChildItem *.tf
 
       - name: Terraform Init
-        run: terraform -chdir=parent init
+        run: terraform -chdir="$env:GITHUB_WORKSPACE/parent" init
 
       - name: Terraform Validate
-        run: terraform -chdir=parent validate
+        run: terraform -chdir="$env:GITHUB_WORKSPACE/parent" validate
 
       # Feature branch: Plan only
       - name: Terraform Plan
         if: startsWith(github.ref, 'refs/heads/feature/')
-        run: terraform -chdir=parent plan
+        run: terraform -chdir="$env:GITHUB_WORKSPACE/parent" plan
 
       # Main branch: Apply
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
-        run: terraform -chdir=parent apply -auto-approve
+        run: terraform -chdir="$env:GITHUB_WORKSPACE/parent" apply -auto-approve
