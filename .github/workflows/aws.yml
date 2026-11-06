@@ -18,8 +18,14 @@ jobs:
     defaults:
       run:
         shell: powershell -ExecutionPolicy Bypass -File {0}
+        working-directory: ./parent
 
     steps:
+      - name: Debug - list files
+        run: |
+          Get-Location
+          Get-ChildItem -Recurse -Filter *.tf | Select-Object FullName
+
       - name: Checkout
         uses: actions/checkout@v4
 
