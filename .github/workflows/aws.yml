@@ -23,17 +23,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Debug Repository
-        run: |
-          Write-Host "Repository Root:"
-          Get-Location
-
-          Write-Host "All Files:"
-          Get-ChildItem -Force
-
-          Write-Host "Terraform Files:"
-          Get-ChildItem -Filter *.tf -Recurse
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
@@ -47,37 +36,18 @@ jobs:
       - name: Terraform Version
         run: terraform version
 
-      - name: Verify Terraform Working Directory
-        run: |
-          Write-Host "Current Directory:"
-          Get-Location
-
-          Write-Host "main.tf exists:"
-          Test-Path .\main.tf
-
-          Write-Host "Terraform files:"
-          Get-ChildItem *.tf
-
       - name: Terraform Init
-        run: |
-          Set-Location "$env:GITHUB_WORKSPACE\parent"
-          Write-Host "Terraform Directory:"
-          Get-Location
-          terraform init
+        run: terraform init
 
       - name: Terraform Validate
-        run: |
-          Set-Location "$env:GITHUB_WORKSPACE\parent"
-          terraform validate
+        run: terraform validate
 
+      # Feature branch: Plan only
       - name: Terraform Plan
         if: startsWith(github.ref, 'refs/heads/feature/')
-        run: |
-          Set-Location "$env:GITHUB_WORKSPACE\parent"
-          terraform plan
+        run: terraform plan
 
+      # Main branch: Apply
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
-        run: |
-          Set-Location "$env:GITHUB_WORKSPACE\parent"
-          terraform apply -auto-approve
+        run: terraform apply -auto-approve
