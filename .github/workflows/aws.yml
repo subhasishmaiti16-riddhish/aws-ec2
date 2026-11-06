@@ -10,6 +10,7 @@ on:
       - main
       - 'feature/**'
 
+
 jobs:
   terraform:
     runs-on: [self-hosted, Windows, X64]
@@ -17,7 +18,7 @@ jobs:
     defaults:
       run:
         shell: powershell -ExecutionPolicy Bypass -File {0}
-        # working-directory: ./parent
+        working-directory: ./parent
 
     steps:
       - name: Checkout
@@ -37,23 +38,17 @@ jobs:
         run: terraform version
 
       - name: Terraform Init
-        run: |
-          Set-Location "$env:GITHUB_WORKSPACE\parent"
-          terraform init
+        run: terraform init
 
       - name: Terraform Validate
-        run: |
-          Set-Location "$env:GITHUB_WORKSPACE\parent"
-          terraform validate
+        run: terraform validate
 
+      # Feature branch: Plan only
       - name: Terraform Plan
         if: startsWith(github.ref, 'refs/heads/feature/')
-        run: |
-          Set-Location "$env:GITHUB_WORKSPACE\parent"
-          terraform plan
+        run: terraform plan
 
+      # Main branch: Apply
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
-        run: |
-          Set-Location "$env:GITHUB_WORKSPACE\parent"
-          terraform apply -auto-approve
+        run: terraform apply -auto-approve
