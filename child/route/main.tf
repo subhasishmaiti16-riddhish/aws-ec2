@@ -32,3 +32,7 @@ resource "aws_route" "private_nat" {
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id         = var.nat_gateway_id
 }
+resource "aws_route_table_association" "public" {
+  subnet_id      = "subnet-04787196016ffe02f"   # বা data source/variable থেকে
+  route_table_id = aws_route_table.public["route-table-dev1"].id
+}
