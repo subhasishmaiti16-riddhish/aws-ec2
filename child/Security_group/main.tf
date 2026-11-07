@@ -41,6 +41,14 @@ resource "aws_security_group" "bastion_sg" {
     cidr_blocks = ["106.202.36.233/32"]  #### My computer's public IP address
   }
 
+  ingress {
+    description = "SSH from EC2 Instance Connect"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["18.206.107.24/29"]
+  }
+
   egress {  #####Outbound traffic rules
     from_port   = 0
     to_port     = 0
