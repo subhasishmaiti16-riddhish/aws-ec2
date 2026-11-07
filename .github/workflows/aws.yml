@@ -1,0 +1,54 @@
+name: mama-terraform
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+
+
+jobs:
+  terraform:
+    runs-on: [self-hosted, Windows, X64]
+
+    defaults:
+      run:
+        shell: powershell -ExecutionPolicy Bypass -File {0}
+        working-directory: ./parent
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: arn:aws:iam::484614878994:role/GitHubTerraformRole
+          aws-region: ap-south-1
+          audience: sts.amazonaws.com
+
+      - name: Verify AWS Authentication
+        run: aws sts get-caller-identity
+
+      - name: Terraform Version
+        run: terraform version
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      # Feature branch: Plan only
+      - name: Terraform Plan
+        if: startsWith(github.ref, 'refs/heads/feature/')
+        run: terraform plan
+
+      # Main branch: Apply
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main'
+        run: terraform apply -auto-approve
