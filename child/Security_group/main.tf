@@ -52,3 +52,7 @@ resource "aws_security_group" "bastion_sg" {
     Name = each.value.bsg_name
   }
 }
+moved {
+  from = aws_security_group.ssh["sg-dev1"]
+  to   = aws_security_group.private_ec2_sg["sg-dev1"]
+}

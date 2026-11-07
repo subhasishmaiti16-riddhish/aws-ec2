@@ -33,16 +33,12 @@ ec2-dev = {
     instance_type_private = "t3.micro"
     key_name              = "terraform-key"
     ec2_name              = "new_ec2"
-    key_algorithm         = "RSA"
-    key_rsa_bits          = 4096
   }
   ec2-dev2 = {
     sg_name               = "bastion-sg"
     instance_type_bastion = "t3.micro"
     key_name              = "terraform-key"
     bastion_ec2_name      = "bastion-host"
-    key_algorithm         = "RSA"
-    key_rsa_bits          = 4096
 
   }
 }

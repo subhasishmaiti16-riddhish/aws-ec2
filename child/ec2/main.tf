@@ -1,13 +1,11 @@
 resource "tls_private_key" "ssh" {
-  for_each  = var.ec2
-  algorithm = each.value.key_algorithm
-  rsa_bits  = each.value.key_rsa_bits
+  algorithm = "RSA"
+  rsa_bits  = 4096
 }
 
 resource "aws_key_pair" "terraform" {
-  for_each   = var.ec2
-  key_name   = each.value.key_name
-  public_key = tls_private_key.ssh[each.key].public_key_openssh
+  key_name   = "terraform-key"
+  public_key = tls_private_key.ssh.public_key_openssh
 }
 
 
@@ -22,7 +20,7 @@ resource "aws_instance" "private" {
 
   subnet_id = data.aws_subnet.private.id
 
-  key_name = aws_key_pair.terraform[each.key].key_name
+  key_name = aws_key_pair.terraform.key_name
 
   vpc_security_group_ids = [
     data.aws_security_group.private.id
@@ -46,7 +44,7 @@ resource "aws_instance" "bastion" {
 
   subnet_id = data.aws_subnet.public.id
 
-  key_name = aws_key_pair.terraform[each.key].key_name
+  key_name = aws_key_pair.terraform.key_name
 
   vpc_security_group_ids = [
     data.aws_security_group.bastion.id
@@ -57,4 +55,19 @@ resource "aws_instance" "bastion" {
   tags = {
     Name = each.value.bastion_ec2_name
   }
+}
+
+moved {
+  from = aws_instance.ec2["ec2-dev1"]
+  to   = aws_instance.private["ec2-dev1"]
+}
+
+moved {
+  from = tls_private_key.ssh["ec2-dev1"]
+  to   = tls_private_key.ssh
+}
+
+moved {
+  from = aws_key_pair.terraform["ec2-dev1"]
+  to   = aws_key_pair.terraform
 }
