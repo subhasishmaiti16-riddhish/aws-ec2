@@ -38,12 +38,12 @@ resource "aws_route_table_association" "public" {
 }
 
 resource "aws_route_table_association" "private" {
-  subnet_id = subnet-079d623d676fb5e64
+  subnet_id      = "subnet-079d623d676fb5e64"
   route_table_id = aws_route_table.private["route-table-dev1"].id
 }
 
 resource "aws_route_table_association" "nat_subnet" {
-  subnet_id = subnet-034e2c5e3705ae859
+  subnet_id      = "subnet-034e2c5e3705ae859"
   route_table_id = aws_route_table.public["route-table-dev1"].id
 }
 
